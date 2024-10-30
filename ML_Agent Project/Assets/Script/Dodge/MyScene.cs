@@ -5,12 +5,12 @@ using UnityEngine;
 
 public class MyScene : MonoBehaviour
 {
-
     public GameObject area = null;
 
     private int areaNum = 9;
     private int rows = 3;
-    private int interval = 60;
+    private int intervalZ = 200;
+    private int intervalX = 60;
 
     EnvironmentParameters m_ResetParameters = null; 
 
@@ -28,11 +28,11 @@ public class MyScene : MonoBehaviour
             if(i % rows == 0 && i != 0)
             {
                 x = 0;
-                z += interval; 
+                z += intervalZ; 
             }
 
             areaPrefab.transform.position = new Vector3(x, 0, z);
-            x += interval; 
+            x += intervalX; 
         }
     }
 

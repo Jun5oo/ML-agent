@@ -10,12 +10,11 @@ using Unity.Hierarchy;
 public class MyAgent : Agent
 {
     public Area area;
+    public GameObject agentPos; 
     public GameObject player; 
     Rigidbody rb;
 
-    float agentSpeed = 3f;
-    Vector3 center = Vector3.zero;
-
+    float agentSpeed = 10f;
 
     public float DecisionWaitingTime = 0.01f;
     float m_currentTime = 0f;
@@ -30,7 +29,7 @@ public class MyAgent : Agent
     public override void Initialize()
     {
         rb = gameObject.GetComponent<Rigidbody>();
-        center = gameObject.transform.position;
+        transform.position = agentPos.transform.position;
 
         Academy.Instance.AgentPreStep += WaitTimeInference; 
         // m_BufferSensor = gameObject.GetComponent<BufferSensorComponent>();  
@@ -105,7 +104,6 @@ public class MyAgent : Agent
                 sensor.AddObservation(new Vector2(0, 0)); 
             }
 
- 
 
         }
 
@@ -123,7 +121,10 @@ public class MyAgent : Agent
 
     public override void OnActionReceived(ActionBuffers actions)
     {
+        rb.velocity = Vector3.zero; 
+
         var action = actions.DiscreteActions[0];
+
         Vector3 force = Vector3.zero;
 
         switch (action)
@@ -135,7 +136,9 @@ public class MyAgent : Agent
             default: force = new Vector3(0, 0, 0) * agentSpeed; break; 
         }
 
-        rb.AddForce(force, ForceMode.VelocityChange);
+        // rb.AddForce(force, ForceMode.VelocityChange);
+        rb.velocity = force; 
+
         Collider[] block = Physics.OverlapBox(gameObject.transform.position, Vector3.one * 0.5f);
 
         if (block.Where(Col => Col.gameObject.CompareTag("Bullet")).ToArray().Length != 0)
@@ -150,29 +153,37 @@ public class MyAgent : Agent
             EndEpisode();
         }
 
+        else if (block.Where(Col => Col.gameObject.CompareTag("Wall")).ToArray().Length != 0)
+        {
+            AddReward(-3f); 
+        }
+
         float currentDist = Vector3.Distance(this.transform.position, player.transform.position); 
 
         if(prevDistance > currentDist)
         {
-            AddReward(0.01f); 
+            AddReward(0.001f); 
         }
 
         else
         {
-            AddReward(-0.01f); 
+            AddReward(-0.001f); 
         }
 
-        prevDistance = currentDist; 
+ 
 
-        AddReward(0.001f); 
-
+        prevDistance = currentDist;
     }
 
     public override void OnEpisodeBegin()
     {
         area.ResetEnv();
 
-        transform.localPosition = center;
+        int rand = Random.Range(-5, 5); 
+
+        transform.position = agentPos.transform.position;
+        transform.position += new Vector3(rand, 0f, 0f); 
+
         rb.velocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
 

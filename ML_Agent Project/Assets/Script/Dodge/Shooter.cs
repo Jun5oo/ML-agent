@@ -5,8 +5,10 @@ using UnityEngine;
 
 public class Shooter : MonoBehaviour
 {
-    public TestArea area; 
+    public GameObject[] shootDirections; 
     public GameObject bullet;
+
+    List<GameObject> bullets = new List<GameObject>();
 
     WaitForSeconds _wait = new WaitForSeconds(0.5f);
 
@@ -20,25 +22,43 @@ public class Shooter : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (ableToShoot)
-        {
+        if(ableToShoot)
             StartCoroutine(coFire()); 
-
-            GameObject _bullet = Instantiate(bullet);
-            _bullet.transform.position = this.transform.position;
-            area.GetComponent<TestArea>()._testBullets.Add(_bullet); 
-        }
     }
 
     IEnumerator coFire()
     {
-        if (!ableToShoot)
-            yield return null;
+        // int rand = Random.Range(0, 3);
+        // int rand1 = Random.Range(3, 5); 
+        int rand = Random.Range(0, 5);
+        
+        GameObject _bullet1 = Instantiate(bullet); 
+        bullets.Add(_bullet1);
+        _bullet1.transform.position = shootDirections[rand].transform.position;
+        _bullet1.transform.rotation = shootDirections[rand].transform.rotation;
 
-        ableToShoot = false; 
+        /*
+        GameObject _bullet2 = Instantiate(bullet);
+        _bullet2.transform.position = shootDirections[rand2].transform.position;
+        _bullet2.transform.rotation = shootDirections[rand2].transform.rotation;
+        bullets.Add(_bullet2);
+        */ 
+
+
+        ableToShoot = false;
 
         yield return _wait;
 
-        ableToShoot = true; 
+        ableToShoot = true;
+    }
+
+    public void Clear()
+    {
+        foreach(var _bullet in bullets)
+        {
+            Destroy(_bullet); 
+        }
+
+        bullets.Clear(); 
     }
 }
