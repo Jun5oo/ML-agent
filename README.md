@@ -33,6 +33,8 @@ Unity ML agent를 사용해 특정 행동을 스스로 학습하는 AI를 구현
 기존 Action은 AddForce로 가속도가 너무 붙어서 속도로 밀어붙이는 느낌이 있어 조금 변경해주었다. 
 위 학습에서 이어서 진행했으며, 조금 더 학습이 필요한 것으로 보인다. 
 
+추가로 점차 Bullet의 속도를 늘려가며 학습을 진행해볼 예정이다. 
+
 # References
 
 https://github.com/reinforcement-learning-kr/Unity_ML_Agents_2.0
